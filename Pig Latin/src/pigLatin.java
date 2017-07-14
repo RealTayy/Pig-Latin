@@ -100,6 +100,7 @@ public class pigLatin {
                                 endString = word.substring(0, indexOfSpilt);
                             }
                         }
+                        //Rules for structure of word
                         word = begString + "-" + endString + "ay";
 
                         // Capitalizes word if it was previous capitalized
@@ -118,7 +119,66 @@ public class pigLatin {
                 return finalString;
 
             case 2: //Translates to Ubbi Dubbi
-                finalString = intString;
+
+                /*Logic for translating*/
+                for (String word : wordsArray) {
+                    //Rules for if word doesn't exist AKA user pressed space twice in a row. Skip the "word"
+                    if (word.length() == 0) {
+                        finalString = finalString + word;
+                    }
+
+                    //Rules for if word starts with a punctuation. Returns as is
+                    else if (!Character.isLetterOrDigit(word.charAt(0))) {
+                        finalString = finalString + word + " ";
+                    }
+
+                    //Rules for if word starts with Number or Letter
+                    else {
+                        int wordLength = word.length();
+                        boolean isUppercase = false;
+
+                        //Checks if word starts with a letter and if is uppercase or not
+                        if (Character.isLetter(word.charAt(0))) {
+                            isUppercase = Character.isUpperCase(word.charAt(0)); //Saves whether or not is capitalized word
+                        }
+
+                        word = word.toLowerCase();  //Changes all chars to lowercase
+
+                        int indexOfPunc = word.length(); //Sets Punc marker to be at end of work and keeps it that way if there is no punctuation in the word.
+                        boolean hasPunc = false;
+                        String punctuation = "";
+
+                        //Looks for any punctuation, deletes it and any letter after it. Saves index of where the punc was found
+                        for (int i = 0; i < wordLength; i++) {
+                            boolean isCharOrNum = Character.isLetterOrDigit(word.charAt(i));
+                            if (!isCharOrNum) {
+                                hasPunc = true;
+                                indexOfPunc = i;
+                                break;
+                            }
+                        }
+
+                        //Saves all the chars as a string after the first punc if found and adds it again later at the end of string for word
+                        if (hasPunc) {
+                            punctuation = word.substring(indexOfPunc);
+                        }
+                        /*Rules for Translation to selected Language*/
+                        //Spilts word into sections. Spilt is at the beginning of every vowel sound
+                        //String[] wordArray = word.split();
+
+                        // Capitalizes word if it was previous capitalized
+                        if (isUppercase && word.length() > 1) {
+                            word = (String.valueOf(word.charAt(0)).toUpperCase()) + word.substring(1);
+                        } else if (isUppercase && (word.length() == 1)) {
+                            word = (String.valueOf(word.charAt(0)).toUpperCase());
+                        } else if (isUppercase) {
+                            finalString = "Error when understanding caps";
+                            return finalString;
+                        }
+
+                        finalString = finalString + word + punctuation + " ";
+                    }
+                }
                 return finalString;
         }
 
@@ -131,9 +191,7 @@ public class pigLatin {
             if (vowels.contains(String.valueOf(str.charAt(i)))){
                 return i;
             }
-
         }
-
         //If no vowel found return index as -1
         return -1;
     }
@@ -142,9 +200,8 @@ public class pigLatin {
         String vowels = "AEIOUaeiou";
         if (vowels.contains(String.valueOf(c))){
             return true;
-        } else {
-            return false;
         }
+            return false;
     }
 
     public boolean hasVowel (String str) {
@@ -159,9 +216,9 @@ public class pigLatin {
     public static void main(String[] args) {
 
         pigLatin test = new pigLatin();
-        //System.out.println(test.toLanguage("You is gay. Suck my Drick", 1));
+        System.out.println(test.toLanguage("Weaw ladder  Sally's !a? sweet !.!", 2));
         //System.out.println(test.indexOfFirstVowel("sdff"));
-        System.out.println(test.hasVowel("sd;a"));
+        //System.out.println(test.hasVowel("sd;a"));
 
     }
 
