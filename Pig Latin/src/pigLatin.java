@@ -196,6 +196,16 @@ public class pigLatin {
         return -1;
     }
 
+    public int indexOfFirstChar (String str, char c){
+        for (int index = 0; index < str.length(); index++){
+            if (str.charAt(index) == c){
+                return index;
+            }
+        }
+        //If char not found return index as -1
+        return -1;
+    }
+
     public boolean isVowel (char c){
         String vowels = "AEIOUaeiou";
         if (vowels.contains(String.valueOf(c))){
@@ -213,12 +223,141 @@ public class pigLatin {
         return false;
     }
 
+    public int roll20 (){
+        int randomNumber = (int)(Math.random() * 20 + 1);
+        return randomNumber;
+    }
+
+    public int fkIt (){
+        boolean twoOnes = false;
+        int numberOfRolls = 1;
+        while (!twoOnes){
+            int currentRoll = roll20();
+            if (currentRoll == 1 ){
+                int secondRoll = roll20();
+                if (secondRoll == 1){
+                    twoOnes = true;
+                }
+            } else {
+                numberOfRolls++;
+            }
+        }
+        return numberOfRolls;
+    }
+
+    public int testRNG(){
+        int testQ = 1;
+        int totalT = 0;
+        while (testQ != 1000000){
+            int num = fkIt();
+            System.out.println("Trial " + testQ + " : " + num);
+            totalT += num;
+            testQ++;
+        }
+        return totalT/testQ;
+    }
+
+    public String toEnglish(String str, int inputLanguage) {
+        String finalString = "";
+
+        //Splits each word into a separate string
+        String[] wordsArray = str.split(" ");
+        for (String word : wordsArray){
+            System.out.println(word);
+        }
+
+        switch (inputLanguage){
+            case 0: //Translate from English
+                finalString = str;
+                return finalString;
+
+            case 1: //Translates from Pig Latin
+                for (String word : wordsArray){
+
+                    //Rules for if word doesn't exist AKA user pressed space twice in a row. Skip the "word"
+                    if (word.length() == 0) {
+                        finalString = finalString + word;
+                    }
+
+                    //Rules for if word starts with a punctuation. Returns as is
+                    else if (!Character.isLetterOrDigit(word.charAt(0))) {
+                        finalString = finalString + word + " ";
+                    }
+
+                    //Rules if word starts with a num or letter
+                    else {
+
+                        boolean isUppercase = false;
+
+                        //Checks if word starts with a letter and if is uppercase or not
+                        if (Character.isLetter(word.charAt(0))) {
+                            isUppercase = Character.isUpperCase(word.charAt(0)); //Saves whether or not is capitalized word
+                        }
+
+                        word = word.toLowerCase();  //Changes all chars to lowercase
+
+                        //Finds the index of the '-' if it exist. Returns -1 if it doesn't
+                        int indexOfSpilt = indexOfFirstChar(word, '-');
+
+                        //Rules if word isn't typed in pig latin language
+                        if (indexOfSpilt == -1) {
+                            finalString += word + " ";
+
+                        //Rules if word follows pig latin rules
+                        } else {
+
+                            //divides word in two parts where the '-' is found.
+                            String begString = word.substring(indexOfSpilt);
+                            String endString = word.substring(0, indexOfSpilt);
+
+                            //Gets rid of the '-' and 'ay' that is added for pig latin language
+                            begString = begString.replaceFirst("-", "");
+                            begString = begString.replaceFirst("[a].", "");
+                            begString = begString.replaceFirst("[a]", "");
+
+                            int indexOfPunc = begString.length();
+
+                            for (int i = 0; i < begString.length(); i++) {
+                                boolean isCharOrNum = Character.isLetterOrDigit(begString.charAt(i));
+                                if (!isCharOrNum) {
+                                    indexOfPunc = i;
+                                    break;
+                                }
+                            }
+
+                            String punc = begString.substring(indexOfPunc);
+                            begString = begString.substring(0, indexOfPunc);
+
+                            word = begString + endString + punc;
+
+                            // Capitalizes word if it was previous capitalized
+                            if (isUppercase && word.length() > 1) {
+                                word = (String.valueOf(word.charAt(0)).toUpperCase()) + word.substring(1);
+                            } else if (isUppercase && (word.length() == 1)) {
+                                word = (String.valueOf(word.charAt(0)).toUpperCase());
+                            } else if (isUppercase) {
+                                finalString = "Error when understanding caps";
+                                return finalString;
+                            }
+
+                            finalString += word + " ";
+                        }
+                    }
+                }
+                return finalString;
+        }
+        return "Unable to translate selected input language to english";
+    }
+
     public static void main(String[] args) {
 
         pigLatin test = new pigLatin();
-        System.out.println(test.toLanguage("Weaw ladder  Sally's !a? sweet !.!", 2));
+        //System.out.println(test.toLanguage("Weaw ladder  Sally's !a? sweet !.!", 2));
         //System.out.println(test.indexOfFirstVowel("sdff"));
         //System.out.println(test.hasVowel("sd;a"));
+        //System.out.println(test.fkIt());
+        //System.out.println(test.indexOfFirstChar("Ello-hay", '-'));
+        System.out.println(test.toEnglish("KALSJDFKaksdjf a jEROIAJFeDS:FA k{EWf kaPKA(TQ%(* %AP$T Adsf?", 1));
 
     }
 

@@ -1,7 +1,6 @@
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import java.awt.event.*;
 import java.util.HashMap;
 
 public class mainWindow {
@@ -13,8 +12,10 @@ public class mainWindow {
     private JTextField outputTextField;
     private JTextArea textOutput;
 
-    int inputLanguage;
-    int outputLanguage;
+    public int inputLanguage;
+    public int outputLanguage;
+
+    private String engStr = "";
 
     public mainWindow() {
         HashMap<Integer, String> languageKey = new HashMap<>();
@@ -37,12 +38,10 @@ public class mainWindow {
 
         //Sets the starting input/output language
         inputComboBox.setSelectedIndex(0);
-        outputComboBox.setSelectedIndex(3);
+        outputComboBox.setSelectedIndex(0);
 
         //Changes current input language
-        inputComboBox.addActionListener(e -> {
-            inputLanguage = inputComboBox.getSelectedIndex();
-        });
+        inputComboBox.addActionListener(e -> inputLanguage = inputComboBox.getSelectedIndex());
 
         //Changes current output language and translate existing text if there.
         outputComboBox.addActionListener(e -> {
@@ -75,9 +74,98 @@ public class mainWindow {
     }
 
     public String toEnglish(String str, int inputLanguage) {
-        String finalString = str;
+        String finalString = "";
 
-        return finalString;
+        //If field is empty return nothing
+        if (textInput.getText().length() == 0) {
+            return finalString;
+        }
+
+        //Splits each word into a separate string
+        String[] wordsArray = str.split(" ");
+
+        switch (inputLanguage){
+            case 0: //Translate from English
+                finalString = str;
+                return finalString;
+
+            case 1: //Translates from Pig Latin
+                for (String word : wordsArray){
+
+                    //Rules for if word doesn't exist AKA user pressed space twice in a row. Skip the "word"
+                    if (word.length() == 0) {
+                        finalString = finalString + word;
+                    }
+
+                    //Rules for if word starts with a punctuation. Returns as is
+                    else if (!Character.isLetterOrDigit(word.charAt(0))) {
+                        finalString = finalString + word + " ";
+                    }
+
+                    //Rules if word starts with a num or letter
+                    else {
+
+                        boolean isUppercase = false;
+
+                        //Checks if word starts with a letter and if is uppercase or not
+                        if (Character.isLetter(word.charAt(0))) {
+                            isUppercase = Character.isUpperCase(word.charAt(0)); //Saves whether or not is capitalized word
+                        }
+
+                        word = word.toLowerCase();  //Changes all chars to lowercase
+
+                        //Finds the index of the '-' if it exist. Returns -1 if it doesn't
+                        int indexOfSpilt = indexOfFirstChar(word, '-');
+
+                        //Rules if word isn't typed in pig latin language
+                        if (indexOfSpilt == -1) {
+                            finalString += word + " ";
+
+                            //Rules if word follows pig latin rules
+                        } else {
+
+                            //divides word in two parts where the '-' is found.
+                            String begString = word.substring(indexOfSpilt);
+                            String endString = word.substring(0, indexOfSpilt);
+
+                            //Gets rid of the '-' and 'ay' that is added for pig latin language
+                            begString = begString.replaceFirst("-", "");
+                            begString = begString.replaceFirst("[a].", "");
+                            begString = begString.replaceFirst("[a]", "");
+
+                            int indexOfPunc = begString.length();
+
+                            for (int i = 0; i < begString.length(); i++) {
+                                boolean isCharOrNum = Character.isLetterOrDigit(begString.charAt(i));
+                                if (!isCharOrNum) {
+                                    indexOfPunc = i;
+                                    break;
+                                }
+                            }
+
+                            String punc = begString.substring(indexOfPunc);
+                            begString = begString.substring(0, indexOfPunc);
+
+                            word = begString + endString + punc;
+
+                            // Capitalizes word if it was previous capitalized
+                            if (isUppercase && word.length() > 1) {
+                                word = (String.valueOf(word.charAt(0)).toUpperCase()) + word.substring(1);
+                            } else if (isUppercase && (word.length() == 1)) {
+                                word = (String.valueOf(word.charAt(0)).toUpperCase());
+                            } else if (isUppercase) {
+                                finalString = "Error when understanding caps";
+                                return finalString;
+                            }
+
+                            finalString += word + " ";
+                        }
+                    }
+                }
+                return finalString;
+        }
+
+        return "Unable to translate selected input language to english";
     }
 
     public String toLanguage(String str, int outputLanguage) {
@@ -92,7 +180,7 @@ public class mainWindow {
         String[] wordsArray = str.split(" ");
 
         //Translates word by word
-        switch (outputLanguage) {
+        switch (outputLanguage){
             case 0: //Translates to English
                 finalString = str;
                 return finalString;
@@ -124,30 +212,26 @@ public class mainWindow {
                         word = word.toLowerCase();  //Changes all chars to lowercase
 
                         int indexOfPunc = word.length(); //Sets Punc marker to be at end of work and keeps it that way if there is no punctuation in the word.
-                        boolean hasPunc = false;
-                        String punctuation = "";
 
                         //Looks for any punctuation, deletes it and any letter after it. Saves index of where the punc was found
                         for (int i = 0; i < wordLength; i++) {
                             boolean isCharOrNum = Character.isLetterOrDigit(word.charAt(i));
                             if (!isCharOrNum) {
-                                hasPunc = true;
                                 indexOfPunc = i;
                                 break;
                             }
                         }
 
-                        //Saves all the chars as a string after the first punc if found and adds it again later at the end of string for word
-                        if (hasPunc) {
-                            punctuation = word.substring(indexOfPunc);
-                        }
+                        //Saves string after the punctuation mark is found is it exist.
+                        String punctuation = word.substring(indexOfPunc);
+
                     /*Rules for create each word structure*/
                         //Rules for if word contains no vowels
-                        String begString = "begString not defined";
-                        String endString = "endString not defined";
+                        String begString;
+                        String endString;
                         if (!hasVowel(word)) {
                             begString = word.substring(0, indexOfPunc);
-                            endString = "w";
+                            endString = "";
                         }
                         //Rules if word does contains vowel
                         else {
@@ -155,7 +239,7 @@ public class mainWindow {
                             //Rules if word begins with vowel
                             if (isVowel(word.charAt(0))) {
                                 begString = word.substring(0, indexOfPunc);
-                                endString = "w";
+                                endString = "";
                             }
 
                             //Rules if word does not begin with vowel
@@ -165,9 +249,8 @@ public class mainWindow {
                                     begString = word.substring(indexOfSpilt, indexOfPunc);
                                     endString = word.substring(0, indexOfSpilt);
                                 } else {
-                                    int indexOfSpilt = indexOfFirstVowel(word.substring(0, indexOfPunc));
                                     begString = word.substring(0, indexOfPunc);
-                                    endString = "w";
+                                    endString = "";
                                 }
                             }
                         }
@@ -186,7 +269,7 @@ public class mainWindow {
                         }
 
                         //Adds word to sentence and adds a space afterwards
-                        finalString = finalString + word + punctuation + " ";
+                        finalString += word + punctuation + " ";
                     }
                 }
                 return finalString;
@@ -301,8 +384,8 @@ public class mainWindow {
                                     finalString = "ERROR: Word length is less then 1";
                                     return finalString;
                                 }
-
                                 strSB.append(word.charAt(i));
+
                             //Rules for if firstVowel but not firstLetter
                             } else if (firstVowel && !firstLetter){
                                 firstVowel = false;
@@ -320,7 +403,6 @@ public class mainWindow {
                                     finalString = "ERROR: Word length is less then 1";
                                     return finalString;
                                 }
-
                                 strSB.append(word.charAt(i));
 
                             //Rules for if vowel but not firstVowel
@@ -345,7 +427,6 @@ public class mainWindow {
         }
         return "Language missing logic for translating from english to language";
     }
-
 
     public int indexOfFirstVowel (String str){
         String vowels = "AEIOUaeiou";
@@ -375,6 +456,16 @@ public class mainWindow {
             }
         }
         return false;
+    }
+
+    public int indexOfFirstChar (String str, char c){
+        for (int index = 0; index < str.length(); index++){
+            if (str.charAt(index) == c){
+                return index;
+            }
+        }
+        //If char not found return index as -1
+        return -1;
     }
 
 
