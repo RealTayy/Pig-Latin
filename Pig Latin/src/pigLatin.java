@@ -262,9 +262,6 @@ public class pigLatin {
 
         //Splits each word into a separate string
         String[] wordsArray = str.split(" ");
-        for (String word : wordsArray){
-            System.out.println(word);
-        }
 
         switch (inputLanguage){
             case 0: //Translate from English
@@ -276,7 +273,7 @@ public class pigLatin {
 
                     //Rules for if word doesn't exist AKA user pressed space twice in a row. Skip the "word"
                     if (word.length() == 0) {
-                        finalString = finalString + word;
+                        finalString = finalString + " ";
                     }
 
                     //Rules for if word starts with a punctuation. Returns as is
@@ -303,7 +300,7 @@ public class pigLatin {
                         if (indexOfSpilt == -1) {
                             finalString += word + " ";
 
-                        //Rules if word follows pig latin rules
+                            //Rules if word follows pig latin rules
                         } else {
 
                             //divides word in two parts where the '-' is found.
@@ -345,7 +342,151 @@ public class pigLatin {
                     }
                 }
                 return finalString;
+
+            case 2: //Translate from Ubbi Dubbi
+                for (String word : wordsArray){
+
+                    if (word.length() == 0 ) {
+                        word = " ";
+                    }
+
+                    //Checks to see if word is in Upper case
+                    boolean isUppercase = false;
+                    if (Character.isUpperCase(word.charAt(0))){
+                        isUppercase = true;
+                    }
+
+                    //Changes word to all lowercase
+                    word = word.toLowerCase();
+
+                    StringBuilder wordSB = new StringBuilder(word);
+
+                    //Deletes initial "ub-" if it exist
+                    if (wordSB.indexOf("ub-") == 0){
+                        wordSB.delete(0,3);
+                    }
+
+                    //Deletes all "-ub-" strings in word
+                    while (wordSB.indexOf("-ub-") != -1){
+                        int startIndex = wordSB.indexOf("-ub-");
+                        wordSB.delete(startIndex, startIndex + 4);
+                    }
+
+                    //Caps word is it was originally in caps
+                    if (isUppercase) {
+                        char i = Character.toUpperCase(wordSB.charAt(0));
+                        String j = wordSB.substring(1);
+                        word = i +j;
+                    } else {
+                        word = wordSB.toString();
+                    }
+
+                    finalString += word + " ";
+                }
+                return finalString;
+
+            case 3: //Translate from Haigy Paigy
+                for (String word : wordsArray){
+
+                    if (word.length() == 0 ) {
+                        word = " ";
+                    }
+
+                    //Checks to see if word is in Upper case
+                    boolean isUppercase = false;
+                    if (Character.isUpperCase(word.charAt(0))){
+                        isUppercase = true;
+                    }
+
+                    //Changes word to all lowercase
+                    word = word.toLowerCase();
+
+                    StringBuilder wordSB = new StringBuilder(word);
+
+                    //Deletes initial "ub-" if it exist
+                    if (wordSB.indexOf("haig-") == 0){
+                        wordSB.delete(0,5);
+                    }
+
+                    //Deletes all "-ub-" strings in word
+                    while (wordSB.indexOf("-aig-") != -1){
+                        int startIndex = wordSB.indexOf("-aig-");
+                        wordSB.delete(startIndex, startIndex + 5);
+                    }
+
+                    //Caps word is it was originally in caps
+                    if (isUppercase) {
+                        char i = Character.toUpperCase(wordSB.charAt(0));
+                        String j = wordSB.substring(1);
+                        word = i +j;
+                    } else {
+                        word = wordSB.toString();
+                    }
+
+                    finalString += word + " ";
+                }
+                return finalString;
+
+            case 4: //Translate from Gibberish
+                for (String word : wordsArray) {
+
+                    if (word.length() == 0) {
+                        word = " ";
+                    }
+
+                    //Checks to see if word is in Upper case
+                    boolean isUppercase = false;
+                    if (Character.isUpperCase(word.charAt(0))) {
+                        isUppercase = true;
+                    }
+
+                    //Changes word to all lowercase
+                    word = word.toLowerCase();
+
+                    StringBuilder wordSB = new StringBuilder(word);
+
+                    //Deletes initial Gibberish if it exist
+                    if (wordSB.indexOf("idig-") != -1) {
+                        wordSB.delete(0, 5);
+                    }
+
+                    if (wordSB.indexOf("itug-") != -1) {
+                        wordSB.delete(0, 5);
+                    }
+
+                    if (wordSB.indexOf("itherg-") != -1) {
+                        wordSB.delete(0, 7);
+                    }
+
+                    //Deletes all gibberish from word
+                    while (wordSB.indexOf("-idig-") != -1) {
+                        wordSB.delete(wordSB.indexOf("-idig-"), wordSB.indexOf("-idig-") + 6);
+                    }
+
+                    while (wordSB.indexOf("-itug-") != -1) {
+                        wordSB.delete(wordSB.indexOf("-itug-"), wordSB.indexOf("-itug-") + 6);
+                    }
+
+                    while (wordSB.indexOf("-itherg-") != -1) {
+                        wordSB.delete(wordSB.indexOf("-itherg-"), wordSB.indexOf("-itherg-") + 8);
+                    }
+
+                    //Caps word if it was originally in caps
+                    if (isUppercase) {
+                        char i = Character.toUpperCase(wordSB.charAt(0));
+                        String j = wordSB.substring(1);
+                        word = i + j;
+                    } else {
+                        word = wordSB.toString();
+                    }
+
+                    finalString += word + " ";
+                }
+                return finalString;
         }
+
+
+
         return "Unable to translate selected input language to english";
     }
 
@@ -357,7 +498,7 @@ public class pigLatin {
         //System.out.println(test.hasVowel("sd;a"));
         //System.out.println(test.fkIt());
         //System.out.println(test.indexOfFirstChar("Ello-hay", '-'));
-        System.out.println(test.toEnglish("KALSJDFKaksdjf a jEROIAJFeDS:FA k{EWf kaPKA(TQ%(* %AP$T Adsf?", 1));
+        System.out.println(test.toEnglish("S-ub-ally", 2));
 
     }
 
