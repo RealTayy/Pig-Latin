@@ -134,8 +134,7 @@ public class mainWindow {
 
                             //Gets rid of the '-' and 'ay' that is added for pig latin language
                             begString = begString.replaceFirst("-", "");
-                            begString = begString.replaceFirst("[a].", "");
-                            begString = begString.replaceFirst("[a]", "");
+                            begString = begString.replaceFirst("ay", "");
 
                             int indexOfPunc = begString.length();
 
@@ -147,12 +146,14 @@ public class mainWindow {
                                 }
                             }
 
+                            //Splits the word and the punctuation after it
                             String punc = begString.substring(indexOfPunc);
                             begString = begString.substring(0, indexOfPunc);
 
+                            //Puts the word in correct order
                             word = begString + endString + punc;
 
-                            // Capitalizes word if it was previous capitalized
+                            //Capitalizes word if it was previous capitalized
                             if (isUppercase && word.length() > 1) {
                                 word = (String.valueOf(word.charAt(0)).toUpperCase()) + word.substring(1);
                             } else if (isUppercase && (word.length() == 1)) {
