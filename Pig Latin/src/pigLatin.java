@@ -1,3 +1,5 @@
+//THIS IS JUST A TEST AREA I USE TO TEST METHOD AND STUFF SO I DON'T HAVE TO LAUNCH APP EVERYTIME
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
